@@ -1,0 +1,11 @@
+[Unit]
+Description=Shadowsocks Client Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/sslocal -c /home/mhf/.cow/shadowsocks.json
+
+[Install]
+WantedBy=multi-user.target
