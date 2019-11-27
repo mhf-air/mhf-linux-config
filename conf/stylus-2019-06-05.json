@@ -1,0 +1,61 @@
+[
+	{
+		"installDate": 1539742405142,
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"name": "developer.mozilla.org",
+		"sections": [
+			{
+				"code": "html {\n  scroll-behavior: auto;\n}",
+				"urls": [],
+				"urlPrefixes": [],
+				"domains": [
+					"developer.mozilla.org"
+				],
+				"regexps": []
+			}
+		],
+		"id": 1
+	},
+	{
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"installDate": 1552620340248,
+		"name": "zhihu",
+		"sections": [
+			{
+				"code": "figure, .RichText-video {\n  width: 400px;\n  height: 100%;\n  overflow: auto;\n  position: absolute;\n  top: 0;\n  left: 100%;\n}\n.Question-sideColumn {\n  display: none;\n}\n\n.GlobalSideBar {\n  display: none;\n}\n.Topstory-mainColumn {\n  width: 100%;\n}\n\n.HotItem-title {\n  font-weight: 500;\n}\n.HotItem-img {\n  display: none;\n}\n.HotItem-metrics {\n  display: none;\n}\n.HotItem-excerpt {\n  display: none !important;\n}\n.HotItem-label {\n  display: none;\n}",
+				"domains": [
+					"www.zhihu.com"
+				]
+			}
+		],
+		"id": 2,
+		"updateDate": 1559630448323
+	},
+	{
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"installDate": 1559628102619,
+		"name": "weibo",
+		"sections": [
+			{
+				"code": ".td-02 {\n  font-size: 18px;\n  width: 1000px;\n  padding: 6px 0;\n}\n.td-02 a {\n  color: #222 !important;\n}",
+				"urls": [
+					"https://s.weibo.com/top/summary?cate=realtimehot"
+				]
+			}
+		],
+		"updateDate": 1559695910650,
+		"id": 3
+	}
+]

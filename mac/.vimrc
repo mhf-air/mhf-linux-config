@@ -15,9 +15,6 @@ set term=xterm-256color
 set background=dark
 au BufEnter * if &filetype == "" | setlocal ft=conf | endif
 
-let tabIndentList = ["sh", "kotlin"]
-au BufWritePre * if index(tabIndentList, &ft) >= 0 | call Format("tab") | endif
-
 " set noerrorbells visualbell t_vb=
 " autocmd TabEnter * set visualbell t_vb=
 
@@ -96,9 +93,9 @@ set ruler
 " tab
 set smarttab
 set expandtab
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
 
 " indent
 set smartindent
@@ -125,9 +122,6 @@ set linebreak
 set nolist
 set textwidth=0
 
-" force wrap when vimdiff
-autocmd FilterWritePre * if &diff | setlocal wrap< | endif
-
 " misc
 set confirm
 set cmdheight=1
@@ -145,8 +139,6 @@ vnoremap hl <esc>
 " to move in long lines
 nnoremap j  gj
 nnoremap k  gk
-nnoremap <C-h>  zH
-nnoremap <C-l>  zL
 
 " change bindings for moving between windows
 nnoremap J  <C-w>j
@@ -176,67 +168,42 @@ nnoremap L  <C-w>l
 " vnoremap <esc> <nop>
 
 " =============================== Vundle ====================================
-" filetype off
-" set rtp+=~/.vim/bundle/Vundle.vim
-" call vundle#begin()
-"
-" Plugin 'VundleVim/Vundle.vim'
+
+filetype off
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim'
 " Plugin 'valloric/YouCompleteMe'
-" Plugin 'scrooloose/nerdtree'
-" Plugin 'jistr/vim-nerdtree-tabs'
-" Plugin 'scrooloose/nerdcommenter'
-" Plugin 'ctrlpvim/ctrlp.vim'
 " Plugin 'w0rp/ale'
-" Plugin 'majutsushi/tagbar'
-" Plugin 'kshenoy/vim-signature'
-" Plugin 'mileszs/ack.vim'
-"
-" Plugin 'fatih/vim-go'
-" Plugin 'rust-lang/rust.vim'
-" Plugin 'udalov/kotlin-vim'
-" Plugin 'wavded/vim-stylus'
-" Plugin 'leafgarland/typescript-vim'
-" Plugin 'mhf-air/vim-pug'
-" Plugin 'mhf-air/vim-vue'
-"
-" call vundle#end()
-" filetype on
-" filetype plugin on
+Plugin 'scrooloose/nerdtree'
+Plugin 'jistr/vim-nerdtree-tabs'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'majutsushi/tagbar'
+Plugin 'kshenoy/vim-signature'
+Plugin 'mileszs/ack.vim'
 
-" =============================== Plug ====================================
-call plug#begin('~/.vim/bundle')
+" Plugin 'Yggdroot/indentLine'
+" Plugin 'xolox/vim-easytags'
+" Plugin 'xolox/vim-misc'
 
-Plug 'valloric/YouCompleteMe'
-Plug 'scrooloose/nerdtree'
-Plug 'jistr/vim-nerdtree-tabs'
-Plug 'scrooloose/nerdcommenter'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'w0rp/ale'
-Plug 'majutsushi/tagbar'
-Plug 'kshenoy/vim-signature'
-Plug 'mileszs/ack.vim'
+Plugin 'fatih/vim-go'
+Plugin 'rust-lang/rust.vim'
+Plugin 'udalov/kotlin-vim'
+Plugin 'wavded/vim-stylus'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'mhf-air/vim-pug'
+Plugin 'mhf-air/vim-vue'
+" Plugin 'digitaltoad/vim-pug'
+" Plugin 'posva/vim-vue'
 
-Plug 'mhf-air/vim-u'
-Plug 'fatih/vim-go'
-Plug 'rust-lang/rust.vim'
-Plug 'udalov/kotlin-vim'
-Plug 'wavded/vim-stylus'
-Plug 'leafgarland/typescript-vim'
-Plug 'rhysd/vim-llvm'
-Plug 'mhf-air/vim-pug'
-Plug 'mhf-air/vim-vue'
+call vundle#end()
+filetype on
 
-call plug#end()
-filetype indent off
 " =============================== Plugin ====================================
 
-" disable automatic comment insertion, must put after filetype plugin on
-au FileType * setlocal fo-=c fo-=r fo-=o
-
-" ack
-if executable("ag")
-  let g:ackprg = "ag"
-endif
+filetype plugin on
 
 " rust
 let g:rustfmt_autosave=1
@@ -247,8 +214,6 @@ let g:rustfmt_fail_silently=1
 let NERDTreeWinPos=1
 " let NERDTreeCaseSensitiveSort=1
 let NERDTreeSortOrder=['\/$', '^\l', '*', '\.swp$',  '\.bak$', '\~$']
-let NERDTreeIgnore=['\~$', '^zz-']
-" let NERDTreeMapToggleFilters='I' " not working
 " nerdtree-tabs
 map <leader>n <plug>NERDTreeTabsToggle<cr>
 
@@ -257,16 +222,12 @@ let g:NERDSpaceDelims=1
 let g:NERDCommentEmptyLines=1
 let g:NERDTrimTrailingWhitespace=1
 " let g:NERDCompactSexyComs=1
-let g:NERDCustomDelimiters = {
-    \ 'c': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
-\ }
 
 " ctrlp
 let g:ctrlp_map='<leader>p'
 let g:ctrlp_cmd='CtrlP'
 let g:ctrlp_use_caching=1
 " let g:ctrlp_by_filename = 1
-let g:ctrlp_regexp = 1
 let g:ctrlp_clear_cache_on_exit=1
 let g:ctrlp_prompt_mappings = {
   \ 'PrtSelectMove("j")':   ['<s-tab>'],
@@ -279,26 +240,9 @@ let g:ctrlp_prompt_mappings = {
   \ }
 let g:ctrlp_custom_ignore = {
   \'dir':'\v[\/](node_modules|platforms|plugins|target)$',
-  \ }
-  " \'func':'CtrlpIgnore',
+  \}
 " let g:ctrlp_user_command="fzf -e -f ''"
 " let g:ctrlp_user_command="find %s -type f"
-
-function! CtrlpIgnore(item, type) abort
-  let m = {
-    \ "node_modules": "",
-    \ "platforms": "",
-    \ "plugins": "",
-    \ "target": "",
-    \ }
-  let cwdLen = len(getcwd()) + 1
-  if (a:type == "dir")
-    if has_key(m, a:item[cwdLen:])
-      return 1
-    endif
-  endif
-  return 0
-endfunction
 
 " vim-go
 let g:go_highlight_functions=1
@@ -307,10 +251,12 @@ let g:go_highlight_structs=1
 let g:go_highlight_interfaces=1
 let g:go_highlight_operators=1
 let g:go_highlight_build_constrants=1
-let g:go_echo_go_info = 0
 let g:go_gocode_unimported_packages=1
 let g:go_fmt_command='goimports'
 " let g:go_fmt_autosave=0
+
+" auto-pairs
+let g:AutoPairsCenterLine=0
 
 " autoformat
 " let g:formatters_go = ['goimports']
@@ -322,8 +268,8 @@ let g:tagbar_left=1
 let g:tagbar_width=30
 let g:tagbar_iconchars=['▸', '▾']
 " au FileType go nested :TagbarOpen
-au FileType go,rust,java,c nested call ResizeTagbar()
-au VimResized *.go,*.rs,*.c call ResizeTagbar()
+au FileType go,rust,java nested call ResizeTagbar()
+au VimResized *.go,*.rs call ResizeTagbar()
 let g:tagbar_type_rust = {
    \ 'ctagstype' : 'rust',
    \ 'kinds' : [
@@ -362,9 +308,6 @@ set completeopt -=preview
 set completeopt=longest,menu
 let g:ycm_collect_identifiers_from_comments_and_strings=1
 let g:ycm_goto_buffer_command='new-or-existing-tab'
-let g:ycm_enable_diagnostic_signs=0
-let g:ycm_enable_diagnostic_highlighting=0
-let g:ycm_echo_current_diagnostic=0
 let g:ycm_python_binary_path='python3'
 let g:ycm_global_ycm_extra_conf='~/c/.ycm_extra_conf.py'
 
@@ -377,10 +320,7 @@ hi ALEWarningSign ctermbg=235 ctermfg=190
 let g:ale_lint_on_text_changed = "never"
 let g:ale_linters = {
 \   "go":["go build", "gometalinter"],
-\   "c":[],
-\   "javascript":[],
 \   "kotlin":[],
-\   "java":[],
 \}
 let ale_go_gometalinter_options="
 \ --disable=golint
@@ -394,7 +334,6 @@ let ale_python_pylint_options="
 \ -d missing-docstring
 \ -d too-few-public-methods
 \"
-let g:ale_c_parse_compile_commands=1
 
 " ============================ Language Specific ==============================
 
@@ -411,7 +350,7 @@ augroup kotlin
   au BufRead *.kt nnoremap <leader>r :w !kotlinc % -include-runtime -d /tmp/kt.jar && java -jar /tmp/kt.jar<cr>
   au BufWritePre *.kt call Format("kt")
   au BufRead *.kt setlocal expandtab
-  " au BufRead *.kt setlocal ts=2 sw=2 sts=2
+  au BufRead *.kt setlocal ts=4 sw=4 sts=4
 augroup END
 
 " rust
@@ -419,7 +358,7 @@ augroup rust
   autocmd!
   au FileType rust nnoremap <leader>r :w !cargo check -q && cargo run<cr>
   au FileType rust setlocal expandtab
-  " au FileType rust setlocal ts=2 sw=2 sts=2
+  au FileType rust setlocal ts=2 sw=2 sts=2
 augroup END
 
 " lisp
@@ -438,12 +377,6 @@ augroup sh
   au BufRead *.sh nnoremap <leader>r :w !bash %<cr>
 augroup END
 
-" llvm ir
-augroup llvm
-  autocmd!
-  au BufRead *.ll nnoremap <leader>r :w !lli %<cr>
-augroup END
-
 " node.js
 augroup node
   autocmd!
@@ -455,50 +388,46 @@ augroup END
 " html
 augroup html
   autocmd!
-  " au BufWritePre *.html call Format("html")
+  au BufWritePre *.html call Format("html")
 augroup END
 
 " css
 augroup css
   autocmd!
-  " au BufWritePre *.css call Format("css")
+  au BufWritePre *.css call Format("css")
 augroup END
 
 " vue
 augroup vue
   autocmd!
-  au BufWritePre *.vue call Format("vue")
+  " au BufWritePre *.vue call Format("vue")
   au BufRead,BufWritePost *.vue syntax sync fromstart
   " au FileType vue noremap <buffer> <leader>w :%!vue-formatter<cr>:w<cr>
   au BufRead *.vue call OpenVueVsp()
-  " au FileType vue nnoremap <leader>t :call TurnToVue()<cr>
-  au FileType vue setlocal nowrap
+  au FileType vue nnoremap <leader>t :call TurnToVue()<cr>
 augroup END
 
 " c
 augroup c
   autocmd!
-  " au BufRead *.c nnoremap <leader>r :w !gcc % -o /tmp/c-compiled-random-string && /tmp/c-compiled-random-string<cr>
-  au BufRead *.c nnoremap <leader>r :w !clang % -o /tmp/c-compiled-random-string && /tmp/c-compiled-random-string<cr>
+  au BufRead *.c nnoremap <leader>r :w !gcc % -o /tmp/c-compiled-random-string && /tmp/c-compiled-random-string<cr>
   au BufRead *.c setlocal expandtab
   au BufWritePre *.c call Format("c")
-  au BufRead,BufNewFile *.h set filetype=c
 augroup END
 
 " python
 augroup python
   autocmd!
   au BufRead *.py nnoremap <leader>r :w !python3 %<cr>
-  " au FileType python setlocal expandtab cindent
   au FileType python setlocal expandtab
-  " au FileType python setlocal ts=2 sw=2 sts=2
+  au FileType python setlocal ts=2 sw=2 sts=2
   " au FileType python setlocal ts=4 sw=4 sts=4
   au BufWritePre *.py call Format("py")
 augroup END
 
 " ===============================  tagbar  ====================================
 " resize tagbar according to main window's size
-function! ResizeTagbar()
+function ResizeTagbar()
   " debug
   " echom winwidth(0).":".winwidth(1)
   if winwidth(0) < 100
@@ -531,7 +460,7 @@ endfunction
 
 " let g:vue_disable_pre_processors=1
 
-function! OpenVueVsp()
+function OpenVueVsp()
   if winnr("$") > 1
     return
   endif
@@ -587,41 +516,28 @@ function! ToggleMaxWindows()
 endfunction
 
 " ===============================    fmt   ====================================
-function! Format(arg)
+function Format(arg)
 
   if a:arg == "js"
-    let l:cmd = "js-beautify -r -n -t -m 2 -k -b collapse,preserve-inline"
+    let l:cmd = "js-beautify -r -n -s 2 -m 2 -k -b collapse,preserve-inline"
   elseif a:arg == "py"
     let l:cmd = "yapf -i -p --style='{
-                  \ based_on_style: google,
-                  \ blank_line_before_nested_class_or_def: False,
-                  \ blank_lines_around_top_level_definition: 1,
-                  \ use_tabs: 1,
+                  \ based_on_style: chromium,
+                  \ blank_line_before_nested_class_or_def=False,
+                  \ blank_lines_around_top_level_definition=1,
                 \ }'"
   elseif a:arg == "c"
-    let l:cmd = "clang-format -i -style='{
-                  \ BasedOnStyle: Google,
-                  \ TabWidth: 4,
-                  \ IndentWidth: 4,
-                  \ UseTab: ForContinuationAndIndentation,
-                  \ AlignOperands: false,
-                  \ AllowAllArgumentsOnNextLine: false,
-                  \ AllowAllParametersOfDeclarationOnNextLine: false,
-                  \ AlwaysBreakBeforeMultilineStrings: false,
-                  \ PenaltyBreakAssignment: 21,
-                \ }' -sort-includes=false"
+    let l:cmd = "clang-format -i -style='chromium'"
   elseif a:arg == "vue"
-    let l:cmd = "tab-indent -tabwidth=4 -inplace -input"
+    let l:cmd = "mhf-vue-format"
   elseif a:arg == "kt"
     let l:cmd = "ktlint -F"
   elseif a:arg == "html"
-    let l:cmd = "js-beautify --html -r -n -t -m 2"
+    let l:cmd = "js-beautify --html -r -n -s 2 -m 2"
   elseif a:arg == "css"
-    let l:cmd = "js-beautify --css -r -n -t"
+    let l:cmd = "js-beautify --css -r -n -s 2"
   elseif a:arg == "go"
     let l:cmd = "goimports -w"
-  elseif a:arg == "tab"
-    let l:cmd = "tab-indent -tabwidth=4 -inplace -input"
   endif
 
   let l:curw = winsaveview()
@@ -669,13 +585,13 @@ hi Folded cterm=bold ctermbg=none ctermfg=166
 hi FoldColumn cterm=bold ctermbg=235 ctermfg=166
 set foldcolumn=1
 set foldtext=MyFoldText()
-function! MyFoldText()
+function MyFoldText()
   let line = getline(v:foldstart) . repeat(" ", winwidth(0))
   return line
 endfunction
 
 nnoremap zi :call FoldIndent()<cr>
-function! FoldIndent()
+function FoldIndent()
   let curLineNo = line(".")
   let maxLineNo = line("$")
   let curIndent = indent(curLineNo)
@@ -700,7 +616,7 @@ endfunction
 
 " =============================== .el file ====================================
 " indent .el files
-function! IndentEl()
+function IndentEl()
   let s:totalNumLines = line("$")
   " don't indent when the total number of lines changes
   if s:totalNumLines != len(g:lines_mhf)
@@ -784,13 +700,13 @@ function! IndentEl()
 endfunction
 
 " register some global variables for el-indent
-function! RegisterGlobals()
+function RegisterGlobals()
   let s:totalNumLines = line("$")
   let g:lines_mhf = getline(1, s:totalNumLines)
 endfunction
 
 " get indent num of a string
-function! IndentNum(str)
+function IndentNum(str)
   if len(a:str) != 0
     for i in range(len(a:str))
       if a:str[i] != " "
@@ -801,6 +717,6 @@ function! IndentNum(str)
 endfunction
 
 " get length of a utf-8 encoded string
-function! UtfLen(str)
+function UtfLen(str)
   return len(a:str)
 endfunction

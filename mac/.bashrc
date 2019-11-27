@@ -25,8 +25,8 @@ printf '\033]12;purple\007'
 
 # If not running interactively, don't do anything
 case $- in
-		*i*) ;;
-			*) return;;
+    *i*) ;;
+      *) return;;
 esac
 
 # don't put duplicate lines or lines starting with space in the history.
@@ -53,12 +53,12 @@ shopt -s checkwinsize
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-		debian_chroot=$(cat /etc/debian_chroot)
+    debian_chroot=$(cat /etc/debian_chroot)
 fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-		xterm-color) color_prompt=yes;;
+    xterm-color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -67,139 +67,113 @@ esac
 #force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
-		if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
 	# We have color support; assume it's compliant with Ecma-48
 	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
 	# a case would tend to support setf rather than setaf.)
 	color_prompt=yes
-		else
+    else
 	color_prompt=
-		fi
+    fi
 fi
 
-_git-existed() {
-	local str arr
-	str=$(ls -a)
-	set -f
-	arr=(${str})
-	for branch in "${arr[@]}"; do
-		if [[ "$branch" == ".git" ]]; then
-			return 0
-		fi
-	done
+Git-existed(){
+  local str arr
+  str=`ls -a`
+  set -f
+  arr=(${str})
+  for branch in "${arr[@]}"; do
+    if [[ "$branch" == ".git" ]];then
+      return 0
+    fi
+  done
 
-	return 1
+  return 1
 }
 
-_get-branch() {
-	local currentBranch
-	if _git-existed ; then
-		currentBranch="<$(git rev-parse --abbrev-ref HEAD)>"
-	fi
-	echo $currentBranch
+GetBranch(){
+  let currentBranch
+  if Git-existed ;then
+    currentBranch="<"`git rev-parse --abbrev-ref HEAD`">"
+  fi
+  echo $currentBranch
 }
 
 if [ "$color_prompt" = yes ]; then
-		PS0='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    PS0='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 else
-		#PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-		# PS1="${cyan}\w${green}\$ ${nocolor}"
+    #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    # PS1="${cyan}\w${green}\$ ${nocolor}"
 
-		PS1="${cyan}\w${brown}"'$(_get-branch)'"${green}\$ ${nocolor}"
+    PS1="${cyan}\w${brown}"'$(GetBranch)'"${green}\$ ${nocolor}"
 fi
 unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-		PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-		;;
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
 *)
-		;;
+    ;;
 esac
 
-# alias definitions.
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
 if [ -f ~/.bash_aliases ]; then
-		. ~/.bash_aliases
+    . ~/.bash_aliases
 fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
-	if [ -f /usr/share/bash-completion/bash_completion ]; then
-		. /usr/share/bash-completion/bash_completion
-	elif [ -f /etc/bash_completion ]; then
-		. /etc/bash_completion
-	fi
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
 fi
 
-if [[ -d ~/.bash_completion.d ]]; then
-		. ~/.bash_completion.d/*.bash
-fi
+# export EDITOR=/usr/local/bin/vim
 
-# bind 'set show-all-if-ambiguous on'
+export PATH=$HOME/.bin:$PATH
 
-export EDITOR=/usr/local/bin/vim
-
-# show $PATH
-# echo $PATH | tr ":" "\n" | nl
-
-export PATH=$PATH:$HOME/.bin/aa
-
-# go
+# add go
 export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
+export PATH=$GOPATH/bin:$PATH
 export GOROOT=/usr/local/go
-export PATH=$PATH:$GOROOT/bin
+export PATH=$GOROOT/bin:$PATH
 
 # rust
 export CARGO_HOME=$HOME/.cargo
-export PATH=$PATH:$CARGO_HOME/bin
+export PATH=$CARGO_HOME/bin:$PATH
 
-# android
+# add node and npm
+export PATH=$HOME/software/node/bin:$PATH
+export PATH=$HOME/.yarn/bin:$PATH
+
+# add android
 export ANDROID_HOME=$HOME/android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$ANDROID_HOME/tools:$PATH
+export PATH=$ANDROID_HOME/platform-tools:$PATH
 export JAVA_HOME=$HOME/android/android-studio/jre
-export PATH=$PATH:$JAVA_HOME/bin
-
-# yarn
-export PATH=$PATH:$HOME/.yarn/bin
-
-# pip
-export PATH=$PATH:$HOME/.local/bin
-
-# gradle
-export PATH=$PATH:$HOME/software/gradle/gradle-6.0.1/bin
-
-# cuda
-export CUDA_HOME=/usr/local/cuda
-export PATH=$CUDA_HOME/bin:${PATH:+:${PATH}}
-export LD_LIBRARY_PATH=$CUDA_HOME/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 # proxy
-# export http_proxy=http://127.0.0.1:7777
-# export https_proxy=http://127.0.0.1:7777
-
-_exportCommon() {
-	local list=("node" "blender" "cmake" "clang")
-
-	for item in "${list[@]}"; do
-		export PATH=$HOME/.bin/$item:$PATH
-	done
-}
-_exportCommon
-
-# link-to-bin gradle-1.0/bin gradle
-link-to-bin() {
-	local src="$1"
-	local target="$2"
-	ln -s $(realpath "$src") ~/.bin/"$target"
-}
-
-restart-ss() {
-	sudo systemctl restart cow.service
-	sudo systemctl restart shadowsocks.service
-}
+export http_proxy=http://127.0.0.1:1087
+export https_proxy=http://127.0.0.1:1087

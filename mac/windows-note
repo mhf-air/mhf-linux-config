@@ -1,0 +1,32 @@
+
+download virtual-box
+download virtual-box extension pack
+
+install virtual-box
+click virtual-box extension pack file
+
+download win7 image in baidunetdisk
+install a win7 virtual michine in virtual box
+set /tmp as the shared folder
+in menu -> devices -> shared clipboard, check bidirectional
+in menu -> input -> keyboard, uncheck auto get focus
+
+after installation
+in menu bar, click insert sth., in my computer, click the new drive, then click install sth.
+reboot vm
+
+in order to enable usb in vm
+$ sudo usermod -aG vboxusers mhf
+logout, then login
+
+install autohotkey, firefox, sogou ime
+choose english as the default language
+
+cp Autohotkey.ahk to /tmp
+compile the script
+open start menu -> start(启动)
+link the autohotkey.exe there
+
+in order to connect a phone to a vm
+install android studio
+manuelly install driver, choose "Android compusite adb interface"

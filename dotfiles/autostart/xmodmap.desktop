@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=DvorakKeyboardLayout
+Comment=my keyboard layout
+Exec=xmodmap /home/mhf/.xmodmaprc
+X-GNOME-Autostart-enabled=true

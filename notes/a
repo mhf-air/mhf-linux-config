@@ -1,0 +1,3 @@
+
+转换windows里的乱码txt文件
+  iconv -f gb18030 -t utf-8 win.txt -o linux.txt

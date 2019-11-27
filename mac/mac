@@ -1,0 +1,33 @@
+
+appleid 163 T
+
+iterm2 -> preferences
+  -> general
+    -> window -> uncheck Native full screen windows
+
+  -> profiles
+    -> general -> send text at start -> source ~/.bashrc && clear
+    -> colors -> color presets -> tango dark
+    -> text
+      -> cursor -> underline
+      -> font -> 18pt
+
+
+open browser -> install
+  karabiner-elements
+  iterm2
+  brew
+  shadowsocksx-ng
+  chrome
+
+  node
+  Xcode
+  Android Studio
+
+  VMware fusion
+
+brew install
+  vim tmux yarn htop tree ag wget httpie
+
+install Vundle
+  git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim

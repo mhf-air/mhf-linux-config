@@ -6,5 +6,4 @@ NoDisplay=false
 X-GNOME-Autostart-enabled=true
 Name[en]=tilda
 Name=tilda
-Comment[en]=
-Comment=
+Comment=run tilda

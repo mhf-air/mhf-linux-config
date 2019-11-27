@@ -1,0 +1,142 @@
+" vim-notes
+
+" % current filename, %:p current full filename
+
+" =============================== Basic ====================================
+
+" neccesary setup
+set nocompatible
+syntax on
+set nobackup
+set noswapfile
+set clipboard=unnamedplus
+
+set term=xterm-256color
+set background=dark
+au BufEnter * if &filetype == "" | setlocal ft=conf | endif
+
+" some command-line mode bindings, use ,: to enter : in command-line
+cnoremap : w<space>!
+cnoremap ,: :
+let $BASH_ENV="~/.bash_aliases"
+
+" some leader bindings
+let mapleader=","
+nnoremap <leader>l gt
+nnoremap <leader>h gT
+" nnoremap <leader>w :w<cr>
+
+" cross display
+au BufEnter * setlocal cursorline cursorcolumn
+au WinLeave * setlocal nocursorline nocursorcolumn
+hi Cursorline cterm=NONE ctermbg=235
+hi Cursorcolumn cterm=NONE ctermbg=235
+au FileType tagbar setlocal nocursorline nocursorcolumn
+
+"status line
+set laststatus=2
+set statusline=
+set statusline+=%1*\ %<\ %F
+set statusline+=%1*\ %m%r 
+set statusline+=%=                                "separator between left and right
+set statusline+=%1*\ %-20((%P)%L\ \ %5l,%-3c%)
+
+" status line and vertical border
+set fillchars+=vert:\  "there must be a trailling blank at the end
+hi User1 ctermfg=102 ctermbg=235
+hi VertSplit ctermfg=235
+hi StatusLine ctermfg=235
+hi StatusLine ctermbg=235
+hi StatusLineNC ctermfg=235
+hi StatusLineNC ctermbg=235
+
+" tab line
+hi TabLineFill ctermfg=235
+hi TabLine cterm=bold ctermbg=235 ctermfg=30
+hi TabLineSel ctermfg=28
+
+" visual mode
+hi Visual ctermbg=166
+
+" pop-up menu
+hi Pmenu ctermbg=235 ctermfg=173
+hi PmenuSel ctermbg=237 ctermfg=173
+hi PmenuSbar ctermbg=235
+hi PmenuThumb ctermbg=237
+
+" change cursor color in different modes
+let &t_SI="\<Esc>]12;green\x7"
+let &t_EI="\<Esc>]12;purple\x7"
+
+" line number
+set number
+set numberwidth=4
+set ruler
+
+" tab
+set smarttab
+set expandtab
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+
+" indent
+set smartindent
+set autoindent
+set backspace=indent,eol,start
+set showcmd
+set showmode
+set showmatch
+
+" search
+set incsearch
+set hlsearch
+nnoremap <space> :nohlsearch<cr>
+set ignorecase
+set smartcase
+set isk+=-
+
+" wrap
+set wrap
+set wrapmargin=0
+set linebreak
+set nolist
+set textwidth=0
+
+" misc
+set confirm
+set cmdheight=1
+
+" encoding
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=ucs-bom,utf-8
+set scrolloff=3
+
+" bind <esc> to hl in Insert mode and Visual
+inoremap hl <esc>
+vnoremap hl <esc>
+
+" change bindings for moving between windows
+nnoremap J  <C-w>j
+nnoremap K  <C-w>k
+nnoremap H  <C-w>h
+nnoremap L  <C-w>l
+
+" =============================== android studio ====================================
+
+nnoremap <leader>r :action Run<cr>
+nnoremap <leader>t :action GotoDeclaration<cr>
+nnoremap <leader>w :action ReformatCode<cr>
+
+nnoremap <leader>x :action CloseContent<cr>
+nnoremap <leader>n :action ActivateProjectToolWindow<cr>
+nnoremap <leader>p :action SearchEverywhere<cr>
+
+" comment
+nnoremap <leader>cc ^i// <esc>
+nnoremap <leader>cu ^xxx
+" vnoremap <leader>cm :action CommentByBlockComment<cr><esc>
+vnoremap <leader>cm <esc>o*/<esc>'<O/*<esc><esc>xxxxx
+vnoremap <leader>cu <esc>dd'<dd
+

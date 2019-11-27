@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=root
-ExecStart=/usr/bin/sslocal -c /home/mhf/.cow/shadowsocks.json
+ExecStart=/usr/bin/sslocal -c /home/mhf/.bin/cow/shadowsocks.json
 
 [Install]
 WantedBy=multi-user.target

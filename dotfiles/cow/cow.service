@@ -1,0 +1,11 @@
+[Unit]
+Description=Cow Service
+After=network.target
+
+[Service]
+Type=forking
+User=root
+ExecStart=/home/mhf/.bin/cow/cow.sh start
+
+[Install]
+WantedBy=multi-user.target

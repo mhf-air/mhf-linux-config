@@ -14,501 +14,553 @@ alias l='ls -CF'
 # misc
 alias cp='cp -v'
 alias mv='mv -v'
-alias update='sudo apt update && sudo apt upgrade && sudo apt autoremove'
-newfile (){
-  path=$1
-  dir=`dirname $path`
-  file=`basename $path`
-  mkdir -p $dir
-  touch $path
+alias up='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
+
+newfile() {
+	local path="$1"
+	local dir=$(dirname "$path")
+	mkdir -p "$dir"
+	touch "$path"
 }
-c (){
-  cd "$@"
-  l
+c() {
+	cd "$@"
+	l
 }
 alias ..='c ..'
 alias ...='c ../..'
 
+b() {
+	local url="$1"
+	google-chrome "$url" &> /dev/null
+	wmctrl -a tilda
+}
+
+alias d="docker"
+alias yarn-global-update="yarn global upgrade-interactive"
+alias fe="gnome-open . &> /dev/null && sleep 0.3s && wmctrl -a tilda"
+
 # tmux start cmd
-alias tm='tmux \
-new -c ~/js/src/vue -n server-running -s server-running \; \
-select-pane -t 0 \; \
-new -c ~/js/src -n server -s default\; \
-new-window -c ~/js/src/vue -n js -t default\; \
-select-pane -t 0 \; \
+alias tm="tmux \
+new -c ~/go/src/nice/web-vue -n server-running -s server-running \; \
+split-window -h -c ~/go/src/nice/web-vue\; \
+select-pane -t 1 \; \
+new -c ~/c/vulkan -n server -s default\; \
+new-window -c ~/c/vulkan -n cg -t default\; \
+select-pane -t 1 \; \
 new-window -c ~/go/src/wiki -n go -t default\; \
-select-pane -t 0 \; \
+select-pane -t 1 \; \
 new-window -c ~/go/src/nice -n nice -t default\; \
-select-pane -t 0 \; \
-select-window -t default:0 \; \
-'
-# new-window -c ~/android/kotlin/wiki -n kotlin -t default\; \
+select-pane -t 1 \; \
+new-window -c ~/go/src/nice/web-vue -n js -t default\; \
+select-pane -t 1 \; \
+select-window -t default:1 \; \
+"
 
 # split-window -vc ~/go/src/wiki -p 15 -t default \; \
 # split-window -hc ~/go/src/wiki -p 50 -t default \; \
 alias q-tmux="tmux kill-server"
 
 alias sbcl='sbcl --noinform'
-alias make='make -s'
-alias gcc='gcc -std=c99'
+# alias make='make -s'
+alias m='make'
+alias gcc='gcc -std=c11'
 alias g++='g++ -std=c++11'
-# alias redis='~/software/redis-3.2.0/src/redis-cli'
-alias amamam='xmodmap .xmodmaprc'
+
+alias amamam='xmodmap ~/.xmodmaprc'
+alias mamama='xmodmap ~/.orig-xmodmaprc'
+alias setproxy="export http_proxy=http://127.0.0.1:7777; export https_proxy=http://127.0.0.1:7777; echo 'HTTP Proxy on'"
+alias unsetproxy="unset http_proxy; unset https_proxy; echo 'HTTP Proxy off'"
 
 #some git basic aliases
 alias ga='git add'
 alias gb='git branch'
-alias gc='git commit -m'
+alias gc='git commit'
 alias gco='git checkout'
 alias gd='git diff'
 alias gl='git log --graph \
---pretty=format:"%C(red)%h %Creset%C(yellow)[%C(bold blue)%cn%Creset%C(yellow),%C(green)%cd%Creset%C(yellow)] %C(cyan)%s" \
---date=short
-'
-alias gm='git merge --no-ff --squash'
+--pretty=format:"%C(red)%h   %C(green)%ad   %C(cyan)%s   %C(dim white)%an%Creset  %C(yellow)%d" \
+--date=short'
+# --pretty=format:"%C(red)%h %Creset%C(yellow)[%C(green)%ad%Creset%C(yellow) %C(bold blue)%an%Creset%C(yellow)] %C(cyan)%s %C(yellow)%d%+b" \
+alias gm='git merge --squash'
 alias gs='git status --ignore-submodules'
 alias gg='git add . && git commit -m "s:"'
-
-alias m1='mongo -u mhf -p 123 --authenticationDatabase "admin"'
-alias edit-remote-file='sshfs -o idmap=user root@192.168.1.9:/etc /home/mhf/go/src/wiki/remote-server'
 
 #common typos
 alias suod='sudo'
 alias eixt='exit'
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias vmi='vim'
 
 #================================== vim ===================================
-v(){
-  local session window pane servername str vimcmd
+v() {
+	local session window pane servername str vimcmd
 
-  if [[ -n "$(ps -e | grep tmux)" ]]; then
-    session=$(tmux list-sessions | grep attached | cut -d : -f 1)
-    window=$(tmux list-windows | grep active | cut -d : -f 1)
-    pane=$(tmux list-panes | grep active | cut -d : -f 1)
-    servername=$(echo $session$window$pane | tr 'a-z' 'A-Z')
-  else
-    servername=$(echo "not-in-tmux" | tr 'a-z' 'A-Z')
-  fi
+	if [[ -n "$(ps -e | grep tmux)" ]]; then
+		session=$(tmux list-sessions | grep attached | cut -d : -f 1)
+		window=$(tmux list-windows | grep active | cut -d : -f 1)
+		pane=$(tmux list-panes | grep active | cut -d : -f 1)
+		servername=$(echo $session$window$pane | tr 'a-z' 'A-Z')
+	else
+		servername=$(echo "not-in-tmux" | tr 'a-z' 'A-Z')
+	fi
 
-  str=$(vim --serverlist | grep $servername)
-  if [[ "$str" = "$servername" ]]; then
-    if [ -n "$1" ]; then
-      #now only support open one file, e.g. v .bashrc
-      vimcmd=":cd $PWD<cr>:tabnew<cr>:e $1<cr>"
-    else
-      vimcmd=":cd $PWD<cr>"
-    fi
+	str=$(vim --serverlist | grep "$servername")
+	if [[ -n "$str" ]]; then
+		if [ -n "$1" ]; then
+			#now only support open one file, e.g. v .bashrc
+			vimcmd=":cd $PWD<cr>:tabnew<cr>:e $1<cr>"
+		else
+			vimcmd=":cd $PWD<cr>"
+		fi
 
-    vim --servername $servername --remote-send "$vimcmd"
-    fg
-  else
-    vim --servername $servername
-  fi
+		vim --servername "$str" --remote-send "$vimcmd"
+		fg
+	else
+		vim --servername "$servername"
+	fi
 }
 
 #============================== git workflow ==============================
-git-new-feature(){
-  if ! Git-existed ;then
-    echo -e "${red}git repository doesn't exist${nocolor}"
-    return
-  fi
+git-last-push() {
+	local origin=$(git remote)
+	local cur=$(git rev-parse --abbrev-ref HEAD)
+	local commit=$(git rev-parse "${origin}/${cur}")
+	git reset "$commit"
+}
 
-  if [[ "$#" < 1 ]];then
-    echo -e "${red}error: You need to provide a feature name${nocolor}"
-    return
-  fi
+git-clean() {
+	echo "***** before *****"
+	git count-objects -vH
+	echo
 
-  echo -e "${brown}goal: add a new feature branch *$1*......\n${nocolor}"
-  git-fix-dev
-  echo -en "${cyan}        " && git checkout -b $1
-  echo -e "${green}step: add a *$1* branch in remote...${lightgray}"
-  git push origin $1
+	git reflog expire --all --expire=now
+	git gc --prune=now --aggressive
 
-  echo -e "${brown}\ndone.${nocolor}"
+	echo
+	echo "***** after *****"
+	git count-objects -vH
+}
+
+git-new-feature() {
+	if ! _git-existed ;then
+		echo -e "${red}git repository doesn't exist${nocolor}"
+		return
+	fi
+
+	if [[ "$#" < 1 ]];then
+		echo -e "${red}error: You need to provide a feature name${nocolor}"
+		return
+	fi
+
+	echo -e "${brown}goal: add a new feature branch *$1*......\n${nocolor}"
+	git-fix-dev
+	echo -en "${cyan}        " && git checkout -b $1
+	echo -e "${green}step: add a *$1* branch in remote...${lightgray}"
+	git push origin $1
+
+	echo -e "${brown}\ndone.${nocolor}"
 }
 
 #fix a feature branch
-g(){
-  if ! Git-existed ;then
-    echo -e "${red}git repository doesn't exist${nocolor}"
-    return
-  fi
+g() {
+	if ! _git-existed ;then
+		echo -e "${red}git repository doesn't exist${nocolor}"
+		return
+	fi
 
-  if [[ "$#" < 1 ]];then
-    Git-list-fix-branches
-    return
-  fi
+	if [[ "$#" < 1 ]];then
+		_git-list-fix-branches
+		return
+	fi
 
-  if [[ "$1" == "dev" ]];then
-    echo -e "you should use: git-fix-dev${nocolor}"
-    return
-  elif Git-is-a-feature-branch $1 ;then
-    echo -e "${brown}goal: fix *$1* branch......\n${nocolor}"
+	if [[ "$1" == "dev" ]];then
+		echo -e "you should use: git-fix-dev${nocolor}"
+		return
+	elif _git-is-a-feature-branch $1 ;then
+		echo -e "${brown}goal: fix *$1* branch......\n${nocolor}"
 
-    if [[ -n "$(git status --porcelain)" ]];then
-      echo -e "error: the current branch is not clean${nocolor}"
-      return
-    fi
-    echo -en "${cyan}        " && git checkout $1
+		if [[ -n "$(git status --porcelain)" ]];then
+			echo -e "error: the current branch is not clean${nocolor}"
+			return
+		fi
+		echo -en "${cyan}        " && git checkout $1
 
-    echo -e "${green}step: pull from origin *$1*...${lightgray}"
-    git pull origin $1
-    if [[ -n "$(git status --porcelain)" ]];then
-      echo -e "error: pull merge conflict${nocolor}"
-      return
-    fi
+		echo -e "${green}step: pull from origin *$1*...${lightgray}"
+		git pull origin $1
+		if [[ -n "$(git status --porcelain)" ]];then
+			echo -e "error: pull merge conflict${nocolor}"
+			return
+		fi
 
-    echo -e "${brown}\ndone.${nocolor}"
-  else
-    Git-list-fix-branches
-    return
-  fi
+		echo -e "${brown}\ndone.${nocolor}"
+	else
+		_git-list-fix-branches
+		return
+	fi
 }
 
-g-test(){
-  if ! Git-existed ;then
-    echo -e "${red}git repository doesn't exist${nocolor}"
-    return
-  fi
+g-test() {
+	if ! _git-existed ;then
+		echo -e "${red}git repository doesn't exist${nocolor}"
+		return
+	fi
 
-  if [[ "$#" < 1 ]];then
-    Git-list-fix-branches
-    return
-  fi
+	if [[ "$#" < 1 ]];then
+		_git-list-fix-branches
+		return
+	fi
 
-  if [[ "$1" == "dev" ]];then
-    echo -e "you should use: git-fix-dev-push${nocolor}"
-    return
-  elif Git-is-a-feature-branch $1 ;then
-    echo -e "${brown}goal: merge *$1* to *test*......\n${nocolor}"
-    echo -en "${cyan}        " && git checkout $1
-    if ! Git-pull-feature $1 ;then
-      return
-    fi
-    if ! Git-merge-branch-and-push-test $1 ;then
-      return
-    fi
+	if [[ "$1" == "dev" ]];then
+		echo -e "you should use: git-fix-dev-push${nocolor}"
+		return
+	elif _git-is-a-feature-branch $1 ;then
+		echo -e "${brown}goal: merge *$1* to *test*......\n${nocolor}"
+		echo -en "${cyan}        " && git checkout $1
+		if ! _git-pull-feature $1 ;then
+			return
+		fi
+		if ! _git-merge-branch-and-push-test $1 ;then
+			return
+		fi
 
-    echo -e "${brown}\ndone.${nocolor}"
-  else
-    Git-list-fix-branches
-    return
-  fi
+		echo -e "${brown}\ndone.${nocolor}"
+	else
+		_git-list-fix-branches
+		return
+	fi
 }
 
-g-push(){
-  if ! Git-existed ;then
-    echo -e "${red}git repository doesn't exist${nocolor}"
-    return
-  fi
+g-push() {
+	if ! _git-existed ;then
+		echo -e "${red}git repository doesn't exist${nocolor}"
+		return
+	fi
 
-  if [[ "$#" < 1 ]];then
-    Git-list-fix-branches
-    return
-  fi
+	if [[ "$#" < 1 ]];then
+		_git-list-fix-branches
+		return
+	fi
 
-  if [[ "$1" == "dev" ]];then
-    echo -e "you should use: git-fix-dev-push${nocolor}"
-    return
-  elif Git-is-a-feature-branch $1 ;then
-    echo -e "${brown}goal: push *$1* to origin and merge *$1* to *test*......\n${nocolor}"
-    echo -en "${cyan}        " && git checkout $1
-    if ! Git-push-feature $1 ;then
-      return
-    fi
-    if ! Git-merge-branch-and-push-test $1 ;then
-      return
-    fi
+	if [[ "$1" == "dev" ]];then
+		echo -e "you should use: git-fix-dev-push${nocolor}"
+		return
+	elif _git-is-a-feature-branch $1 ;then
+		echo -e "${brown}goal: push *$1* to origin and merge *$1* to *test*......\n${nocolor}"
+		echo -en "${cyan}        " && git checkout $1
+		if ! _git-push-feature $1 ;then
+			return
+		fi
+		if ! _git-merge-branch-and-push-test $1 ;then
+			return
+		fi
 
-    echo -e "${brown}\ndone.${nocolor}"
-  else
-    Git-list-fix-branches
-    return
-  fi
+		echo -e "${brown}\ndone.${nocolor}"
+	else
+		_git-list-fix-branches
+		return
+	fi
 }
 
 #fix dev branch
-git-fix-dev(){
-  if ! Git-existed ;then
-    echo -e "${red}git repository doesn't exist${nocolor}"
-    return
-  fi
+git-fix-dev() {
+	if ! _git-existed ;then
+		echo -e "${red}git repository doesn't exist${nocolor}"
+		return
+	fi
 
-  echo -e "${brown}goal: fix *dev* branch......\n${nocolor}"
+	echo -e "${brown}goal: fix *dev* branch......\n${nocolor}"
 
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: the current branch is not clean${nocolor}"
-    return
-  fi
-  echo -en "${cyan}        " && git checkout dev
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: the current branch is not clean${nocolor}"
+		return
+	fi
+	echo -en "${cyan}        " && git checkout dev
 
-  echo -e "${green}step: pull from origin *release*...${lightgray}"
-  git pull origin release
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: pull merge conflict${nocolor}"
-    return
-  fi
+	echo -e "${green}step: pull from origin *release*...${lightgray}"
+	git pull origin release
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: pull merge conflict${nocolor}"
+		return
+	fi
 
-  echo -e "${brown}\ndone.${nocolor}"
+	echo -e "${brown}\ndone.${nocolor}"
 }
 
-git-fix-dev-push(){
-  if ! Git-existed ;then
-    echo -e "${red}git repository doesn't exist${nocolor}"
-    return
-  fi
+git-fix-dev-push() {
+	if ! _git-existed ;then
+		echo -e "${red}git repository doesn't exist${nocolor}"
+		return
+	fi
 
-  echo -e "${brown}goal: push *dev* to origin *release* and merge *dev* to *test*......\n${nocolor}"
+	echo -e "${brown}goal: push *dev* to origin *release* and merge *dev* to *test*......\n${nocolor}"
 
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: the current branch is not clean${nocolor}"
-    return
-  fi
-  echo -en "${cyan}        " && git checkout dev
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: the current branch is not clean${nocolor}"
+		return
+	fi
+	echo -en "${cyan}        " && git checkout dev
 
-  echo -e "${green}step: pull from origin *release*...${lightgray}"
-  git pull origin release
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: pull merge conflict${nocolor}"
-    return
-  fi
+	echo -e "${green}step: pull from origin *release*...${lightgray}"
+	git pull origin release
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: pull merge conflict${nocolor}"
+		return
+	fi
 
-  echo -e "${green}\nstep: push to origin *release*...${lightgray}"
-  git push origin dev:release
+	echo -e "${green}\nstep: push to origin *release*...${lightgray}"
+	git push origin dev:release
 
-  #merge dev to all feature branches
-  local str arr
-  str=`git branch | xargs`
-  set -f
-  arr=(${str})
-  for branch in "${arr[@]}"; do
-    if [[ "$branch" != "master" && "$branch" != "dev" && "$branch" != "test" && "$branch" != "*" ]];then
-      if [[ -n "$(git status --porcelain)" ]];then
-        echo -e "error: the current branch is not clean${nocolor}"
-        return
-      fi
-      echo -en "${cyan}\n        " && git checkout $branch
+	#merge dev to all feature branches
+	local str arr
+	str=`git branch | xargs`
+	set -f
+	arr=(${str})
+	for branch in "${arr[@]}"; do
+		if [[ "$branch" != "master" && "$branch" != "dev" && "$branch" != "test" && "$branch" != "*" ]];then
+			if [[ -n "$(git status --porcelain)" ]];then
+				echo -e "error: the current branch is not clean${nocolor}"
+				return
+			fi
+			echo -en "${cyan}\n        " && git checkout $branch
 
-      echo -e "${green}step: merge *dev*...${lightgray}"
-      git merge --no-ff dev
-      if [[ -n "$(git status --porcelain)" ]];then
-        echo -e "error: merge conflict${nocolor}"
-        return
-      fi
+			echo -e "${green}step: merge *dev*...${lightgray}"
+			git merge --no-ff dev
+			if [[ -n "$(git status --porcelain)" ]];then
+				echo -e "error: merge conflict${nocolor}"
+				return
+			fi
 
-      echo
-    fi
-  done
+			echo
+		fi
+	done
 
-  if ! Git-merge-branch-and-push-test dev ;then
-    return
-  fi
+	if ! _git-merge-branch-and-push-test dev ;then
+		return
+	fi
 
-  echo -e "${brown}\ndone.${nocolor}"
+	echo -e "${brown}\ndone.${nocolor}"
 }
 
 #hotfix
-git-hotfix(){
-  if ! Git-existed ;then
-    echo -e "${red}git repository doesn't exist${nocolor}"
-    return
-  fi
+git-hotfix() {
+	if ! _git-existed ;then
+		echo -e "${red}git repository doesn't exist${nocolor}"
+		return
+	fi
 
-  echo -e "${brown}goal: hotfix *master* branch......\n${nocolor}"
+	echo -e "${brown}goal: hotfix *master* branch......\n${nocolor}"
 
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: the current branch is not clean${nocolor}"
-    return
-  fi
-  echo -en "${cyan}        " && git checkout master
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: the current branch is not clean${nocolor}"
+		return
+	fi
+	echo -en "${cyan}        " && git checkout master
 
-  echo -e "${green}step: pull from origin *master*...${lightgray}"
-  git pull origin master
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: pull merge conflict${nocolor}"
-    return
-  fi
+	echo -e "${green}step: pull from origin *master*...${lightgray}"
+	git pull origin master
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: pull merge conflict${nocolor}"
+		return
+	fi
 
-  echo -e "${brown}\ndone.${nocolor}"
+	echo -e "${brown}\ndone.${nocolor}"
 }
 
-git-hotfix-push(){
-  if ! Git-existed ;then
-    echo -e "${red}git repository doesn't exist${nocolor}"
-    return
-  fi
+git-hotfix-push() {
+	if ! _git-existed ;then
+		echo -e "${red}git repository doesn't exist${nocolor}"
+		return
+	fi
 
-  echo -e "${brown}goal: push *master* to origin *master*......\n${nocolor}"
+	echo -e "${brown}goal: push *master* to origin *master*......\n${nocolor}"
 
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: the current branch is not clean${nocolor}"
-    return
-  fi
-  echo -en "${cyan}        " && git checkout master
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: the current branch is not clean${nocolor}"
+		return
+	fi
+	echo -en "${cyan}        " && git checkout master
 
-  echo -e "${green}step: pull from origin master...${lightgray}"
-  git pull origin master
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: pull merge conflict${nocolor}"
-    return
-  fi
+	echo -e "${green}step: pull from origin master...${lightgray}"
+	git pull origin master
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: pull merge conflict${nocolor}"
+		return
+	fi
 
-  echo -e "${green}\nstep: push to origin *master*...${lightgray}"
-  git push origin master
+	echo -e "${green}\nstep: push to origin *master*...${lightgray}"
+	git push origin master
 
-  echo -e "${brown}\ndone.${nocolor}"
+	echo -e "${brown}\ndone.${nocolor}"
 }
 
 
 #for internal use
-Git-list-fix-branches(){
-  echo -e "${brown}choose a *feature* branch:${nocolor}"
+_git-list-fix-branches() {
+	echo -e "${brown}choose a *feature* branch:${nocolor}"
 
-  #list all the feature branches
-  local str arr
-  str=`git branch | xargs`
-  set -f
-  arr=(${str})
-  for branch in "${arr[@]}"; do
-    if [[ "$branch" != "dev" && "$branch" != "master" && "$branch" != "test" && "$branch" != "*" ]];then
-      echo -e "${green}  "$branch"${nocolor}"
-    fi
-  done
+	#list all the feature branches
+	local str arr
+	str=`git branch | xargs`
+	set -f
+	arr=(${str})
+	for branch in "${arr[@]}"; do
+		if [[ "$branch" != "dev" && "$branch" != "master" && "$branch" != "test" && "$branch" != "*" ]];then
+			echo -e "${green}  "$branch"${nocolor}"
+		fi
+	done
 }
 
-Git-pull-feature(){
-  if [[ "$#" < 1 ]];then
-    echo -e "Git-push-feature error: this should not happen, try to edit ~/.bash_aliases${nocolor}"
-    return 1
-  fi
+_git-pull-feature() {
+	if [[ "$#" < 1 ]];then
+		echo -e "_git-push-feature error: this should not happen, try to edit ~/.bash_aliases${nocolor}"
+		return 1
+	fi
 
-  if [[ "$1" == "dev" || "$1" == "master" || "$1" == "*" || "$1" == "test" ]];then
-    Git-list-fix-branches
-  else
-    if [[ -n "$(git status --porcelain)" ]];then
-      echo -e "error: the current branch is not clean${nocolor}"
-      return 2
-    fi
+	if [[ "$1" == "dev" || "$1" == "master" || "$1" == "*" || "$1" == "test" ]];then
+		_git-list-fix-branches
+	else
+		if [[ -n "$(git status --porcelain)" ]];then
+			echo -e "error: the current branch is not clean${nocolor}"
+			return 2
+		fi
 
-    echo -e "${green}step: pull from origin *$1*...${lightgray}"
-    git pull origin $1
-    if [[ -n "$(git status --porcelain)" ]];then
-      echo -e "error: pull merge conflict${nocolor}"
-      return 3
-    fi
-  fi
+		echo -e "${green}step: pull from origin *$1*...${lightgray}"
+		git pull origin $1
+		if [[ -n "$(git status --porcelain)" ]];then
+			echo -e "error: pull merge conflict${nocolor}"
+			return 3
+		fi
+	fi
 
-  return 0
+	return 0
 }
 
-Git-push-feature(){
-  if ! Git-pull-feature $1 ;then
-    return
-  else
-    echo -e "${green}\nstep: push to origin *$1*...${lightgray}"
-    git push origin $1
-  fi
+_git-push-feature() {
+	if ! _git-pull-feature $1 ;then
+		return
+	else
+		echo -e "${green}\nstep: push to origin *$1*...${lightgray}"
+		git push origin $1
+	fi
 
-  return 0
+	return 0
 }
 
-Git-merge-branch-and-push-test(){
-  if [[ "$#" < 1 ]];then
-    echo -e "Git-merge-branch-and-push-test error: this should not happen, try to edit ~/.bash_aliases${nocolor}"
-    return 1
-  fi
+_git-merge-branch-and-push-test() {
+	if [[ "$#" < 1 ]];then
+		echo -e "_git-merge-branch-and-push-test error: this should not happen, try to edit ~/.bash_aliases${nocolor}"
+		return 1
+	fi
 
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: the current branch is not clean${nocolor}"
-    return 2
-  fi
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: the current branch is not clean${nocolor}"
+		return 2
+	fi
 
-  echo -en "${cyan}\n        " && git checkout test
+	echo -en "${cyan}\n        " && git checkout test
 
-  echo -e "${green}step: merge *$1*...${lightgray}"
-  git merge --no-ff $1
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: merge conflict${nocolor}"
-    return 4
-  fi
+	echo -e "${green}step: merge *$1*...${lightgray}"
+	git merge --no-ff $1
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: merge conflict${nocolor}"
+		return 4
+	fi
 
-  echo -e "${green}\nstep: pull from origin *test*...${lightgray}"
-  git pull origin test
-  if [[ -n "$(git status --porcelain)" ]];then
-    echo -e "error: pull merge conflict${nocolor}"
-    return 3
-  fi
+	echo -e "${green}\nstep: pull from origin *test*...${lightgray}"
+	git pull origin test
+	if [[ -n "$(git status --porcelain)" ]];then
+		echo -e "error: pull merge conflict${nocolor}"
+		return 3
+	fi
 
-  echo -e "${green}\nstep: push to origin *test*${lightgray}"
-  git push origin test
+	echo -e "${green}\nstep: push to origin *test*${lightgray}"
+	git push origin test
 
-  return 0
+	return 0
 }
 
-Git-is-a-feature-branch(){
-  if [[ "$#" < 1 ]];then
-    echo -e "Git-is-a-feature-branch error: this should not happen, try to edit ~/.bash_aliases${nocolor}"
-    return
-  fi
+_git-is-a-feature-branch() {
+	if [[ "$#" < 1 ]];then
+		echo -e "_git-is-a-feature-branch error: this should not happen, try to edit ~/.bash_aliases${nocolor}"
+		return
+	fi
 
-  #list all the feature branches
-  local str arr
-  str=`git branch | xargs`
-  set -f
-  arr=(${str})
-  for branch in "${arr[@]}"; do
-    if [[ "$branch" != "dev" && "$branch" != "master" && "$branch" != "test" && "$branch" != "*" ]];then
-      if [[ "$branch" == $1 ]];then
-        return 0
-      fi
-    fi
-  done
+	#list all the feature branches
+	local str arr
+	str=`git branch | xargs`
+	set -f
+	arr=(${str})
+	for branch in "${arr[@]}"; do
+		if [[ "$branch" != "dev" && "$branch" != "master" && "$branch" != "test" && "$branch" != "*" ]];then
+			if [[ "$branch" == $1 ]];then
+				return 0
+			fi
+		fi
+	done
 
-  return 1
+	return 1
 }
 
-Git-existed(){
-  local str arr
-  str=`ls -a`
-  set -f
-  arr=(${str})
-  for branch in "${arr[@]}"; do
-    if [[ "$branch" == ".git" ]];then
-      return 0
-    fi
-  done
+# ================================================================================
+_checkItem() {
+	local wd=$(pwd)
 
-  return 1
+	local item="$1"
+	cd "$item"
+
+	if _git-existed; then
+		local darkgreen='\033[1;32m'
+		local nocolor='\033[0m'
+
+		local full="$wd/$sub"
+		echo -e "${darkgreen}${full:17}${nocolor}"
+
+		git pull origin master
+
+		echo
+		cd "$wd"
+		return 0
+	fi
+
+	local list=($(ls))
+	for sub in "${list[@]}"
+	do
+		if [[ -d "$sub" ]]; then
+			_checkItem "$sub"
+		fi
+	done
+
+	cd "$wd"
+}
+
+go-update() {
+	local wd=$(pwd)
+	cd "/home/mhf/go/src"
+
+	for sub in *
+	do
+		echo $sub
+		if [[ "$sub" == "nice" || "$sub" == "wiki" ]]; then
+			continue
+		fi
+
+		if [[ -d "$sub" ]]; then
+			_checkItem "$sub"
+		fi
+	done
+
+	cd "$wd"
 }
 
 #================================== man ===================================
-man(){
-  LESS_TERMCAP_mb=$'\e'"[1;31m" \
-  LESS_TERMCAP_md=$'\e'"[1;36m" \
-  LESS_TERMCAP_me=$'\e'"[0m" \
-  LESS_TERMCAP_se=$'\e'"[0m" \
-  LESS_TERMCAP_so=$'\e'"[1;40;92m" \
-  LESS_TERMCAP_ue=$'\e'"[0m" \
-  LESS_TERMCAP_us=$'\e'"[1;32m" \
-  command man "$@"
-}
-
-r(){
-  cd /home/mhf/go/src/nice/mist
-  go run gen/main.go
-  go run a.go
-}
-
-#================================== enumlator =============================
-emulator(){
-  cd "$(dirname "$(which emulator)")" && ./emulator "$@";
+man() {
+	LESS_TERMCAP_mb=$'\e'"[1;31m" \
+	LESS_TERMCAP_md=$'\e'"[1;36m" \
+	LESS_TERMCAP_me=$'\e'"[0m" \
+	LESS_TERMCAP_se=$'\e'"[0m" \
+	LESS_TERMCAP_so=$'\e'"[1;40;92m" \
+	LESS_TERMCAP_ue=$'\e'"[0m" \
+	LESS_TERMCAP_us=$'\e'"[1;32m" \
+	command man "$@"
 }
 
 #============================ to be continued =============================
-alias black-android='adb -d shell sh /data/data/me.piebridge.brevent/brevent.sh'
-alias chap-clear="rm -r ~/.gradle/caches/modules-2/metadata-2.36/descriptors/com.iamalisper.chap/ && rm -r ~/.gradle/caches/modules-2/files-2.1/com.iamalisper.chap/"
-alias chap-publish="~/android/project/Chap/gradlew assembleRelease artifactoryPublish"
-alias chap-start="/home/mhf/android/artifactory-oss-5.8.3/bin/artifactoryctl"

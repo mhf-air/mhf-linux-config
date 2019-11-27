@@ -1,0 +1,24 @@
+# You can re-read the inputrc file with
+#   bind -f ~/.inputrc
+
+$include /etc/inputrc
+
+set editing-mode vi
+
+$if mode=vi
+    set keyseq-timeout 80
+    set show-mode-in-prompt on
+    set vi-ins-mode-string \1\e[3 q\2
+    set vi-cmd-mode-string \1\e[1 q\2
+    
+    # normal mode
+    set keymap vi-command
+    
+    # insert mode
+    set keymap vi-insert
+    "hl": vi-movement-mode
+    "\C-l": clear-screen
+    "\C-p": previous-history
+    "\C-n": next-history
+    # RETURN: "\e\n"
+$endif
